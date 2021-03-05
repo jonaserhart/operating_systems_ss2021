@@ -3,3 +3,6 @@ testenvir
 
 # submission folder
 submission
+
+#.DS Files
+.DS_Store
