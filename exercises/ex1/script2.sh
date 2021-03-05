@@ -1,6 +1,6 @@
 #!/bin/zsh
 function usage {
-    echo "Usage: $0 <TODO: fill me in>"
+    echo "Usage: $0 <string to match> <outputfile> <file to search in>"
     exit 1
 }
 
