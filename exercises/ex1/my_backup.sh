@@ -52,7 +52,7 @@ do
         then
             echo "'$BACKUPFILE' already exists, adding timestamp..."
             # check if filename contains extension
-            if [ $BACKUPFILE == *"."* ]
+            if [ $BACKUPFILE = *"."* ]
             then
                 # preseve extension of file when adding timestamp
                 # cut: cut string on delimiter 'd' and take the value at position 'f'
