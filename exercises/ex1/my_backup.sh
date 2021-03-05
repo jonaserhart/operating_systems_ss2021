@@ -41,6 +41,10 @@ do
     # check if $FILE is a file
     if [ -f "$FILE" ]
     then
+        if [[ $FILE == $0 ]]
+        then
+            continue
+        fi
         # check if reading $FILE is permitted
         if [ ! -r "$FILE" ]
         then
@@ -51,8 +55,8 @@ do
         if [ -e "$BACKUPFILE" ]
         then
             echo "'$BACKUPFILE' already exists, adding timestamp..."
-            # check if filename contains extension
-            if [ $BACKUPFILE = *"."* ]
+            # check if filename contains extension via regex
+            if [[ "$BACKUPFILE" =~ .*".".* ]]
             then
                 # preseve extension of file when adding timestamp
                 # cut: cut string on delimiter 'd' and take the value at position 'f'

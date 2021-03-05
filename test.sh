@@ -55,6 +55,7 @@ fi
 
 shift
 
-cd $DIRNAME
+cp $FILETOTEST "$DIRNAME/test/testenvir/$FILENAME"
+cd "$DIRNAME/test/testenvir"
 echo "\nTEST-OUTPUT:"
 eval "sh $FILENAME $@" && echo "TEST-END\n\n✅ succeeded" || echo "TEST-END\n\n❌ failed"
