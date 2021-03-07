@@ -17,8 +17,10 @@ then
         eval "sh $DIRNAME/test/cleanup_test_$FILENAME $DIRNAME" && echo "✅ cleaned up test for $FILETOTEST" || echo "❌ cleanup failed"
         exit 0
     else 
-        echo "❌ no cleanup file found, place it as '$DIRNAME/test/cleanup_test_$FILENAME'"
-        exit 1
+        echo "⚠️  no cleanup file found, if one is needed place it as '$DIRNAME/test/cleanup_test_$FILENAME'"
+        echo "⚡️ default cleaning up test for $FILETOTEST"
+        eval "rm -rf '$DIRNAME/test/testenvir'"
+        exit 0
     fi
 fi
 
@@ -44,6 +46,10 @@ FILETOTEST="$1"
 FILENAME="$(echo $FILETOTEST | rev | cut -f 1 -d '/' | rev)"
 DIRNAME="$(echo $(dirname ${FILETOTEST}))"
 
+echo "⚡️ creating test environment"
+mkdir "$DIRNAME/test/testenvir" && echo "⚡️ created $DIRNAME/test/testenvir"
+cp $FILETOTEST "$DIRNAME/test/testenvir/$FILENAME"
+
 echo "⚡️ executing setup_test for $FILENAME in $DIRNAME"
 
 if [ -e "$DIRNAME/test/setup_test_$FILENAME" ]
@@ -55,7 +61,6 @@ fi
 
 shift
 
-cp $FILETOTEST "$DIRNAME/test/testenvir/$FILENAME"
 cd "$DIRNAME/test/testenvir"
-echo "\nTEST-OUTPUT:"
-eval "sh $FILENAME $@" && echo "TEST-END\n\n✅ succeeded" || echo "TEST-END\n\n❌ failed"
+echo "\nSCRIPT-OUTPUT:\n"
+eval "sh $FILENAME $@" && echo "\nSCRIPT-END\n\n✅ succeeded" || echo "\nSCRIPT-END\n\n❌ failed"
