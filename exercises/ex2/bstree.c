@@ -3,8 +3,6 @@
 #include <math.h>
 
 typedef struct bstree {
-	// indicates that the tree is the root
-	bool isroot;
 	// reference the right child
 	bstree* right;
 	// reference the left child
@@ -16,13 +14,10 @@ typedef struct bstree {
 /**
  * Creates and returns a new binary tree.
  * Must be deallocated by bstree_destroy.
- * O(1).
  */
 bstree* bstree_create() {
 	// allocate memory
 	bstree* tree = malloc(sizeof(bstree));
-	// is root
-	tree->isroot = true;
 	// value of root is not initialized
 	tree->value = NAN;
 	// check if allocation worked
@@ -39,11 +34,10 @@ error:
  * @param value: value to initialize the tree with
  * @param isroot: indicates that the tree is the root.
  **/
-bstree* bstree_create_with_value(value_t value, bool isroot) {
+static bstree* bstree_create_with_value(value_t value) {
 	check(isnan(value) == 0, "nan passed");
 	bstree* tree = bstree_create();
 	tree->value = value;
-	tree->isroot = isroot;
 	check_mem(tree);
 	return tree;
 error:
@@ -67,7 +61,6 @@ void bstree_destroy(bstree* t) {
  * If the value is already in `t`, no changes are made.
  * @param t: tree to insert value into
  * @param v: value to insert
- *
  */
 void bstree_insert(bstree* t, value_t v) {
 	// check if 't' was allocated (is not NULL)
@@ -91,7 +84,7 @@ void bstree_insert(bstree* t, value_t v) {
 		if(t->right == NULL) {
 			// if there is a spot to the right
 			// insert the value
-			t->right = bstree_create_with_value(v, false);
+			t->right = bstree_create_with_value(v);
 		} else {
 			// else: search further to the right
 			bstree_insert(t->right, v);
@@ -101,7 +94,7 @@ void bstree_insert(bstree* t, value_t v) {
 		if(t->left == NULL) {
 			// if there is a spot to the left
 			// insert the value
-			t->left = bstree_create_with_value(v, false);
+			t->left = bstree_create_with_value(v);
 		} else {
 			// else: search further to the left
 			bstree_insert(t->left, v);
@@ -132,7 +125,7 @@ bstree* bstree_maximum_node(bstree* t) {
  * @param t: tree to remove value from
  * @param v: value to remove
  */
-bstree* bstree_remove_aux(bstree* t, value_t v) {
+static bstree* bstree_remove_aux(bstree* t, value_t v) {
 	if(t == NULL) {
 		return NULL;
 	}
@@ -180,7 +173,6 @@ bstree* bstree_remove_aux(bstree* t, value_t v) {
 /**
  * Removes the given value `v` from tree `t`.
  */
-// O(height of tree)
 void bstree_remove(bstree* t, value_t v) {
 	bstree_remove_aux(t, v);
 }
@@ -238,7 +230,7 @@ value_t bstree_maximum(const bstree* t) {
  * @param t: tree to calculate depth in
  * @param v: value to calculate depth for
  */
-int32_t bstree_depth_aux(const bstree* t, value_t v) {
+static int32_t bstree_depth_aux(const bstree* t, value_t v) {
 	if(t == NULL) {
 		return -1;
 	}
@@ -267,7 +259,7 @@ int32_t bstree_depth(const bstree* t, value_t v) {
  * Returns the number of values in the given bstree `t`.
  * NOTE: This should complete in O(1) time.
  * ANOTHERNOTE: this does not compute in O(1) time but in O(height of tree),
- * there is to much potential for inconsitency (that i'm willing to handle)
+ * there is to much potential inconsitency (that i'm willing to handle)
  * when incrementing and decrementing the
  * size of a tree on each operation in c
  */
@@ -287,11 +279,7 @@ int32_t bstree_size(const bstree* t) {
  * @param t: tree to print
  * @param out: stream to print to
  */
-void bstree_print_aux(const bstree* t, FILE* out) {
-	if(t->isroot && isnan(t->value)) {
-		fprintf(out, "[ NIL ]");
-		return;
-	}
+static void bstree_print_aux(const bstree* t, FILE* out) {
 	fprintf(out, "[");
 	if(t->left != NULL) {
 		bstree_print_aux(t->left, out);
@@ -307,12 +295,16 @@ void bstree_print_aux(const bstree* t, FILE* out) {
 
 /**
  * Prints the given bstree `t` to the supplied output stream `out`.
- *
+ * 
  * output format: [<LEFT>, VAL, <RIGHT>] : <SIZE>
  * example empty: [ NIL ] : 0
  * example 3,4,7 in a balanced tree: [[3], 4, [7]] : 3
  */
 void bstree_print(const bstree* t, FILE* out) {
+	if (t == NULL ||isnan(t->value)) {
+		fprintf(out, "[ NIL ] : 0\n");
+		return;
+	}
 	int size = bstree_size(t);
 	bstree_print_aux(t, out);
 	fprintf(out, " : %d\n", size);

@@ -5,7 +5,7 @@
 #  this script backs up the current directory into 'backup_directory'
 #  if a backup of a file already exists a timestamp is added to the backup file
 #  this script also preserves file extensions
-# 
+#
 
 # print usage and exit
 function usage_and_exit {

@@ -19,6 +19,82 @@ The only disatvantage is that the size of the tree is computed in O(n) instead o
 All other function implementations are easier since it is all recursive.  
 In general, I don't have to use an auxilary function for each method.
 
+### Test output:
+
+```
+➜  ex2 git:(main) ✗ make check_task1
+cc -std=c11 -Wall -Werror -Wextra -O2 -g -c bstree.c -o bstree.o
+cc -std=c11 -Wall -Werror -Wextra -O2 -g bstree.o task1_tests.c -o task1_tests
+bash ./check_task.sh task1_tests
+leaks(187,0x202e17e00) malloc: stack logs being written into /tmp/stack-logs.187.10aedd000.leaks.NuAraR.index
+leaks(187,0x202e17e00) malloc: recording malloc and VM allocation stacks to disk using standard recorder
+leaks(187,0x202e17e00) malloc: stack logging compaction turned off; size of log files on disk can increase rapidly
+leaks(187,0x202e17e00) malloc: process 101 no longer exists, stack logs deleted from /tmp/stack-logs.101.10b0f1000.task2_tests.6Vyx5n.index
+task1_tests(188,0x201476e00) malloc: stack logs being written into /tmp/stack-logs.188.1092c0000.task1_tests.3s0Wni.index
+task1_tests(188,0x201476e00) malloc: recording malloc and VM allocation stacks to disk using standard recorder
+task1_tests(188,0x201476e00) malloc: stack logging compaction turned off; size of log files on disk can increase rapidly
+[ NIL ] : 0
+[[3.12], 4.20, [77.70]] : 3
+[[[[-3.14], 2.00], 3.12], 4.20, [[9.99], 77.70, [[123.45], 666.00, [999.99]]]] : 9
+[[[[-3.14], 2.00], 3.12], 4.20, [[[5.50], 9.99], 77.70, [[123.45], 666.00, [999.99]]]] : 10
+task1_tests(188,0x201476e00) malloc: stack logs deleted from /tmp/stack-logs.188.1092c0000.task1_tests.3s0Wni.index
+leaks(189,0x200f56e00) malloc: stack logs being written into /tmp/stack-logs.189.109463000.leaks.UTRJna.index
+leaks(189,0x200f56e00) malloc: recording malloc and VM allocation stacks to disk using standard recorder
+leaks(189,0x200f56e00) malloc: stack logging compaction turned off; size of log files on disk can increase rapidly
+Process:         task1_tests [188]
+Path:            /Users/USER/*/task1_tests
+Load Address:    0x100fb0000
+Identifier:      task1_tests
+Version:         0
+Code Type:       X86-64 (translated)
+Platform:        macOS
+Parent Process:  leaks [187]
+
+Date/Time:       2021-03-15 13:35:05.906 +0100
+Launch Time:     2021-03-15 13:35:05.582 +0100
+OS Version:      macOS 11.2.1 (20D74)
+Report Version:  7
+Analysis Tool:   /Applications/Xcode.app/Contents/Developer/usr/bin/leaks
+Analysis Tool Version:  Xcode 12.4 (12D4e)
+
+Physical footprint:         2061K
+Physical footprint (peak):  2065K
+----
+
+leaks Report Version: 4.0, multi-line stacks
+Process 188: 174 nodes malloced for 13 KB
+Process 188: 0 leaks for 0 total leaked bytes.
+
+leaks(189,0x200f56e00) malloc: stack logs deleted from /tmp/stack-logs.189.109463000.leaks.UTRJna.index
+leaks(187,0x309b00000) malloc: stack logs deleted from /tmp/stack-logs.187.10aedd000.leaks.NuAraR.index
+
+Results:
+✔ task1_tests passed all tests.
+✔ Output of task1_tests matches expected output.
+✔ task1_tests does not have any memory-related bugs.
+
+
+➜  ex2 git:(main) ✗ make check_task2
+cc -std=c11 -Wall -Werror -Wextra -O2 -g bstree.o task2_tests.c -o task2_tests
+bash ./check_task.sh task2_tests
+leaks(228,0x20453fe00) malloc: stack logs being written into /tmp/stack-logs.228.10c619000.leaks.FmApZR.index
+leaks(228,0x20453fe00) malloc: recording malloc and VM allocation stacks to disk using standard recorder
+leaks(228,0x20453fe00) malloc: stack logging compaction turned off; size of log files on disk can increase rapidly
+task2_tests(229,0x2007f3e00) malloc: stack logs being written into /tmp/stack-logs.229.108702000.task2_tests.vn7gl8.index
+task2_tests(229,0x2007f3e00) malloc: recording malloc and VM allocation stacks to disk using standard recorder
+task2_tests(229,0x2007f3e00) malloc: stack logging compaction turned off; size of log files on disk can increase rapidly
+[ NIL ] : 0
+[[3.12], 4.20, [77.70]] : 3
+[3.12, [77.70]] : 2
+leaks(228,0x20453fe00) malloc: stack logs deleted from /tmp/stack-logs.228.10c619000.leaks.FmApZR.index
+
+Results:
+✔ task2_tests passed all tests.
+✔ Output of task2_tests matches expected output.
+✔ task2_tests does not have any memory-related bugs.
+➜  ex2 git:(main) ✗ 
+```
+
 ## Task 3
 
 In this task no implementation is required. Its purpose is to ensure you understand the background behind the details of the previous task. You should be able to answer the following questions without the use of any additional notes. Presenting images and examples is fine, though not required.
@@ -73,7 +149,7 @@ To prevent this, 'header guards' are used to ensure that one name is only define
 
 ### Why is struct bstree not defined in the header file? What are the implications?
 
-
+I guess it's not defined so that the implementation is not restricted too much and is up to the student.
 
 ### Explain the const in the parameter list of bstree_print, is it required?
 
@@ -94,6 +170,9 @@ if memory is very limited on the system, this can quickly become a problem due t
 all (most of all) programming languages are based on the english language, so it makes sense to write documentations in english.
 
 ### Why should you use static for non-exported functions?
+
+a static function is only visible to the file it's declared in.
+If you don't want another programmer to use a function then you could declare it static so noone outside your module can use it.
 
 ### Why should we comment our source code? Is it always needed? What should the comment state? 
 

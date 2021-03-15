@@ -90,6 +90,8 @@ makedir "$1" 2> /dev/null
 
 Nothing would happen if this script was executed, because `makedir`is not a command recognized by the system (if you have not installed a command named `makedir`).
 
+null - device logged keinen errors
+
 ## Task 2
 
 ### What does this shell script do?
@@ -133,7 +135,7 @@ fi
 #!/bin/bash
 if [ ! "$#" -eq 2 ]
 then
-	echo "Please provide exactly two arguments"
+	echo "Please provide exactly two arguments" >&2
 	exit 1
 fi
 
