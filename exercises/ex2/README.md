@@ -1,6 +1,35 @@
 # Exercise 2 - Binary Search Tree documentation
+## Table of contents
+- [Exercise 2 - Binary Search Tree documentation](#exercise-2---binary-search-tree-documentation)
+  * [Implementation notes](#implementation-notes)
+    + [Debug makros in `dbg.h`](#debug-makros-in--dbgh-)
+    + [Why I used `bstree` as node](#why-i-used--bstree--as-node)
+    + [Test output:](#test-output-)
+  * [Task 3](#task-3)
+    + [When would you use a sorted binary tree over a linked list?](#when-would-you-use-a-sorted-binary-tree-over-a-linked-list-)
+    + [What would you change if the tree had to support int values instead of floats? Can you use this approach to support any value type, or are there limitations?](#what-would-you-change-if-the-tree-had-to-support-int-values-instead-of-floats--can-you-use-this-approach-to-support-any-value-type--or-are-there-limitations-)
+    + [Why do we use multiple translation units instead of putting everything a single file?](#why-do-we-use-multiple-translation-units-instead-of-putting-everything-a-single-file-)
+    + [Is the development cycle (i.e. changing a source file, recompiling and running tests) faster when using multiple translation units? Explain your answer.](#is-the-development-cycle--ie-changing-a-source-file--recompiling-and-running-tests--faster-when-using-multiple-translation-units--explain-your-answer)
+    + [What is a header guard and why is it needed?](#what-is-a-header-guard-and-why-is-it-needed-)
+      - [Explanation](#explanation)
+      - [Syntax](#syntax)
+    + [Why is struct bstree not defined in the header file? What are the implications?](#why-is-struct-bstree-not-defined-in-the-header-file--what-are-the-implications-)
+    + [Explain the const in the parameter list of bstree_print, is it required?](#explain-the-const-in-the-parameter-list-of-bstree-print--is-it-required-)
+    + [Explain memory leaks. Why are memory leaks bad?](#explain-memory-leaks-why-are-memory-leaks-bad-)
+    + [What is the reason behind writing everything in English?](#what-is-the-reason-behind-writing-everything-in-english-)
+    + [Why should you use static for non-exported functions?](#why-should-you-use-static-for-non-exported-functions-)
+    + [Why should we comment our source code? Is it always needed? What should the comment state?](#why-should-we-comment-our-source-code--is-it-always-needed--what-should-the-comment-state-)
+    + [What is self-documenting code?](#what-is-self-documenting-code-)
+    + [Why should the module not output debug messages?](#why-should-the-module-not-output-debug-messages-)
+    + [Why and when should you use assert?](#why-and-when-should-you-use-assert-)
+    + [What are the benefits of using a Makefile over calling the compiler by hand?](#what-are-the-benefits-of-using-a-makefile-over-calling-the-compiler-by-hand-)
+    + [Imagine it was your job to design the interface for the bstree module (bstree.h). What, if anything, would you have done differently, and why?](#imagine-it-was-your-job-to-design-the-interface-for-the-bstree-module--bstreeh--what--if-anything--would-you-have-done-differently--and-why-)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 ## Implementation notes
+
+My implementation of the binary search tree is based on the chapters in 'Data Structures & Algorithms in Java' by Goodrich, Tamassia and Goldwasser ([Link](https://www.wiley.com/en-us/Data+Structures+and+Algorithms+in+Java%2C+6th+Edition-p-9781118771334))
 
 ### Debug makros in `dbg.h`
 

@@ -15,8 +15,8 @@ int main() {
 	assert(bstree_contains(t, 4.2f) == true);
 	assert(bstree_contains(t, 77.7f) == true);
 	assert(bstree_contains(t, 3.12f) == true);
-	bstree_print(t, stdout);
 
+	bstree_print(t, stdout);
 	bstree_insert(t, 2.f);
 	bstree_insert(t, -3.14f);
 	bstree_insert(t, 666.f);

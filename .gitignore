@@ -1,5 +1,7 @@
 # test files and directories
 testenvir
+*.o
+*_tests
 
 # submission folder
 submission

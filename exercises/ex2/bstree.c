@@ -32,7 +32,6 @@ error:
 /**
  * method to create a tree and initialize it with a value.
  * @param value: value to initialize the tree with
- * @param isroot: indicates that the tree is the root.
  **/
 static bstree* bstree_create_with_value(value_t value) {
 	check(isnan(value) == 0, "nan passed");
@@ -161,7 +160,6 @@ static bstree* bstree_remove_aux(bstree* t, value_t v) {
 			// change the value of the node to be deleted
 			t->value = temp->value;
 			// delete the node that just moved to the deleted node's position
-			// this will also restructure the tree, if another complication occurs in the process
 			t->left = bstree_remove_aux(t->left, temp->value);
 		}
 	}
@@ -174,7 +172,11 @@ static bstree* bstree_remove_aux(bstree* t, value_t v) {
  * Removes the given value `v` from tree `t`.
  */
 void bstree_remove(bstree* t, value_t v) {
+	check(isnan(v) == 0, "nan passed");
+	check(t != NULL, "passed NULL for 't'");
 	bstree_remove_aux(t, v);
+error:
+	return;
 }
 
 /**
@@ -200,29 +202,33 @@ error:
 }
 
 /**
- * Returns the smallest value in tree `t`.
+ * Returns the smallest value in tree `t` or NaN if NULL was passed
  */
 value_t bstree_minimum(const bstree* t) {
-	// if no more left children
+	check(t != NULL, "passed NULL for 't'");
+	// if no more left children, return value
 	if(t->left == NULL) {
-		// return value
 		return t->value;
 	}
 	// else continue search
 	return bstree_minimum(t->left);
+error:
+	return NAN;
 }
 
 /**
- * Returns the largest value in tree `t`.
+ * Returns the largest value in tree `t` or NaN if NULL was passed
  */
 value_t bstree_maximum(const bstree* t) {
-	// if no more right children
+	check(t != NULL, "passed NULL for 't'");
+	// if no more right children return value
 	if(t->right == NULL) {
-		// return value
 		return t->value;
 	}
 	// else continue search
 	return bstree_minimum(t->right);
+error:
+	return NAN;
 }
 
 /**
@@ -249,10 +255,13 @@ static int32_t bstree_depth_aux(const bstree* t, value_t v) {
  * Returns -1 if the value `v` does not exist.
  */
 int32_t bstree_depth(const bstree* t, value_t v) {
+	check(isnan(v) == 0, "nan passed");
 	if(bstree_contains(t, v) == 0) {
 		return -1;
 	}
 	return bstree_depth_aux(t, v);
+error:
+	return NAN;
 }
 
 /**
@@ -282,11 +291,14 @@ int32_t bstree_size(const bstree* t) {
 static void bstree_print_aux(const bstree* t, FILE* out) {
 	fprintf(out, "[");
 	if(t->left != NULL) {
+		// print left side
 		bstree_print_aux(t->left, out);
 		fprintf(out, ", ");
 	}
+	// print value
 	printf(VALUE_T_FORMAT, t->value);
 	if(t->right != NULL) {
+		// print right side
 		fprintf(out, ", ");
 		bstree_print_aux(t->right, out);
 	}
@@ -295,17 +307,20 @@ static void bstree_print_aux(const bstree* t, FILE* out) {
 
 /**
  * Prints the given bstree `t` to the supplied output stream `out`.
- * 
+ *
  * output format: [<LEFT>, VAL, <RIGHT>] : <SIZE>
  * example empty: [ NIL ] : 0
  * example 3,4,7 in a balanced tree: [[3], 4, [7]] : 3
  */
 void bstree_print(const bstree* t, FILE* out) {
-	if (t == NULL ||isnan(t->value)) {
+	check(out != NULL, "no stream passed");
+	if(t == NULL || isnan(t->value)) {
 		fprintf(out, "[ NIL ] : 0\n");
 		return;
 	}
 	int size = bstree_size(t);
 	bstree_print_aux(t, out);
 	fprintf(out, " : %d\n", size);
+error:
+	return;
 }
