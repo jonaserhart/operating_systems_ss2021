@@ -31,10 +31,6 @@ bstree* bstree_create() {
 	return tree;
 // if memory allocation failed, we are out of memory
 error:
-	if(tree) {
-		// destroy, if it was partly allocated
-		bstree_destroy(tree);
-	}
 	return NULL;
 }
 
@@ -51,9 +47,6 @@ bstree* bstree_create_with_value(value_t value, bool isroot) {
 	check_mem(tree);
 	return tree;
 error:
-	if(tree) {
-		bstree_destroy(tree);
-	}
 	return NULL;
 }
 
@@ -74,7 +67,7 @@ void bstree_destroy(bstree* t) {
  * If the value is already in `t`, no changes are made.
  * @param t: tree to insert value into
  * @param v: value to insert
- * 
+ *
  */
 void bstree_insert(bstree* t, value_t v) {
 	// check if 't' was allocated (is not NULL)
@@ -135,7 +128,7 @@ bstree* bstree_maximum_node(bstree* t) {
  * this methods always returns the root of the given tree
  * if the given tree was restructured during this operation,
  * the restructured version will be returned
- * 
+ *
  * @param t: tree to remove value from
  * @param v: value to remove
  */
@@ -168,8 +161,7 @@ bstree* bstree_remove_aux(bstree* t, value_t v) {
 			// if you look at lines 112-116, the value returned from a recursive call will be
 			// set to the specified subtree
 			return temp;
-		}
-		else {
+		} else {
 			// if the node has two children
 			// get the in-order predecessor (go one left then max right)
 			bstree* temp = bstree_maximum_node(t->left);
@@ -180,7 +172,8 @@ bstree* bstree_remove_aux(bstree* t, value_t v) {
 			t->left = bstree_remove_aux(t->left, temp->value);
 		}
 	}
-	// return new tree (not needed in this case but easier to implement recursively with signature 'bstree* bstree_remove_aux')
+	// return new tree (not needed in this case but easier to implement recursively with signature
+	// 'bstree* bstree_remove_aux')
 	return t;
 }
 
@@ -242,7 +235,7 @@ value_t bstree_maximum(const bstree* t) {
 
 /**
  * Auxilary function for depth
- * @param t: tree to calculate depth in 
+ * @param t: tree to calculate depth in
  * @param v: value to calculate depth for
  */
 int32_t bstree_depth_aux(const bstree* t, value_t v) {
@@ -273,17 +266,20 @@ int32_t bstree_depth(const bstree* t, value_t v) {
 /**
  * Returns the number of values in the given bstree `t`.
  * NOTE: This should complete in O(1) time.
- * ANOTHERNOTE: this does not compute in O(1) time but in O(height of tree), 
+ * ANOTHERNOTE: this does not compute in O(1) time but in O(height of tree),
  * there is to much potential for inconsitency (that i'm willing to handle)
- * when incrementing and decrementing the 
+ * when incrementing and decrementing the
  * size of a tree on each operation in c
  */
 int32_t bstree_size(const bstree* t) {
-	if(t == NULL) return 0;
-	if(isnan(t->value))
+	if(t == NULL) {
 		return 0;
-	else
+	}
+	if(isnan(t->value)) {
+		return 0;
+	} else {
 		return (bstree_size(t->left) + 1 + bstree_size(t->right));
+	}
 }
 
 /**

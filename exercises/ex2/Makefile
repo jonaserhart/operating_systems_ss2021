@@ -1,4 +1,4 @@
-CFLAGS = -std=c11 -O2 -g
+CFLAGS = -std=c11 -Wall -Werror -Wextra -O2 -g
 
 .PHONY: all
 all: task1_tests task2_tests
