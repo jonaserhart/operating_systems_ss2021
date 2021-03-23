@@ -1,15 +1,13 @@
 // don't print debug messages
-// #define NDEBUG
+#define NDEBUG
 #include "dbg.h"
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
 
-void on_finished(int i) {
-	debug("returned: %d", i);
+void on_finished() {
 	// log parent done
 	log_info("Parent done");
 	exit(0);
@@ -48,6 +46,7 @@ int main(int argc, char* argv[]) {
 		sleep(seconds_to_sleep);
 		debug("%ld", time(0));
 		log_info("Child done");
+        
 		// send signal to parent
 		// SIGCHLD: child status has changed
 		kill(parent, SIGCHLD);
