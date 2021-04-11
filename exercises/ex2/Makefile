@@ -5,7 +5,7 @@ all: task1_tests task2_tests
 
 .PHONY: clean
 clean:
-	$(RM) task1_tests task2_tests bstree.o
+	$(RM) task1_tests task2_tests bstree.o *.dSYM
 
 bstree.o: bstree.h bstree.c
 	$(CC) $(CFLAGS) -c bstree.c -o $@
