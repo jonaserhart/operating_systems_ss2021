@@ -7,10 +7,10 @@
 #include <time.h>
 #include <unistd.h>
 
+static volatile sig_atomic_t running = 1;
+
 void on_finished() {
-	// log parent done
-	log_info("Parent done");
-	exit(0);
+	running = 0;
 }
 
 int main(int argc, char* argv[]) {
@@ -24,16 +24,11 @@ int main(int argc, char* argv[]) {
 	check(seconds_to_sleep > 0,
 	      "'seconds to sleep' could not be parsed as an integer greater than 0, got: %d",
 	      seconds_to_sleep);
-	// get pid of parent to send signal to
-	pid_t parent = getpid();
 
 	// define the sigaction
-	struct sigaction sigact;
-	// fill the sigaction struct with zeroes (reduces undefined behavoir)
-	memset(&sigact, 0, sizeof(sigact));
+	struct sigaction sigact = { 0 };
 	// define the signal handler
-	sigact.__sigaction_u.__sa_handler = on_finished;
-	;
+	sigact.sa_handler = on_finished; 
 
 	// create the child process
 	pid_t pid = fork();
@@ -46,19 +41,15 @@ int main(int argc, char* argv[]) {
 		sleep(seconds_to_sleep);
 		debug("%ld", time(0));
 		log_info("Child done");
-        
-		// send signal to parent
-		// SIGCHLD: child status has changed
-		kill(parent, SIGCHLD);
-		// exit
+		// exit (sends sigchld)
 		return 0;
 	} else {
 		// is parent
 		// register signal action with handler
 		sigaction(SIGCHLD, &sigact, NULL);
-		// loop endlessly (signal handler will quit the program)
-		for(;;)
-			;
+		// loop while running is 1
+		while(running);
+		log_info("Parent done");
 	}
 	return 0;
 error:

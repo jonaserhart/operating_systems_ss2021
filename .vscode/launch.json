@@ -9,12 +9,19 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": [],
+            // "args": ["${input:argument}"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb",
+        }
+    ],
+    "inputs": [
+        {
+        "id": "argument",
+        "description": "Argument for execution",
+        "type": "promptString"
         }
     ]
 }
