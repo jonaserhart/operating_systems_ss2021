@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 		}
 		write(fifo, value, BUFSIZ);
 	}
-
+	check(close(fifo) == 0, "Error closing fifo");
 	return 0;
 error:
 	return -1;
