@@ -1,9 +1,10 @@
-CFLAGS = -std=gnu11 -Wall -Werror -Wextra -O2 -g -pthread
+CFLAGS = -std=gnu11 -Wall -Werror -Wextra -O2 -g -pthread -DNDEBUG $(OPTFLAGS)
 FILESTOMAKE = task1 task2 philosophers
 
-.PHONY: all
 all: $(FILESTOMAKE)
 
-.PHONY: clean
+dbg: CFLAGS = -std=gnu11 -Wall -Werror -Wextra -O2 -g -pthread $(OPTFLAGS)
+dbg: all
+
 clean:
 	rm -rf $(FILESTOMAKE) *.dSYM

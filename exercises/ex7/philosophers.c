@@ -10,6 +10,8 @@
 #define RIGHT_CHOPSTICK(n) (n)
 #define LEFT_CHOPSTICK(n) (((n) + 1) % NUM_PHILOSOPHER)
 
+#define LOCK_SUCCESS 0
+
 pthread_t philosopher[NUM_PHILOSOPHER];
 pthread_mutex_t chopstick[NUM_PHILOSOPHER];
 // thread condition
@@ -24,7 +26,7 @@ void* dine(void* id) {
 		// 3. they wait on each other for eternity
 
 		// these next two lines fix the problem
-		if (pthread_mutex_trylock(&chopstick[RIGHT_CHOPSTICK(n)])) {
+		if (pthread_mutex_trylock(&chopstick[RIGHT_CHOPSTICK(n)]) != LOCK_SUCCESS) {
 			// if lock of the first stick was not successful
 			// wait for another philosopher to finish eating, then take the chopstick
 			pthread_cond_wait(&done_eating, &chopstick[RIGHT_CHOPSTICK(n)]);

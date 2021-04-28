@@ -26,7 +26,7 @@
 	fprintf(stderr, "[DEBUG] %s:%d:%s: " M "\n" RESET, __FILE__, __LINE__, __PRETTY_FUNCTION__, \
 	        ##__VA_ARGS__)
 #define debug_multi(M, ...) \
-	fprintf(stderr, "[DEBUG] pid:%d %s:%d:%s: " M "\n" RESET, getpid(), __FILE__, __LINE__, __PRETTY_FUNCTION__, \
+	fprintf(stderr, "[DEBUG] pid:"KYEL"%d"RESET" ppid:"KYEL"%d"RESET" %s:%d:%s: " M "\n" RESET, getpid(), getppid(), __FILE__, __LINE__, __PRETTY_FUNCTION__, \
 	        ##__VA_ARGS__)
 #endif
 /**

@@ -21,23 +21,24 @@ int main() {
         // increment copied global variable (this is not the original)
         debug_multi("incrementing...");
         increment_my_global();
+        debug_multi("after child process increment: %d", my_global);
 		return 0;
 	} else {
 		// parent
         // wait for child
+        debug_multi("waiting...");
 		wait(NULL);
         // this version of my_global is still not incremented
-        log_info("after child process increment: %d", my_global);
+        debug_multi("after child process increment: %d", my_global);
 	}
     
     // create a thread and give it a job
-    int rc = pthread_create(&thread_id, NULL, &increment_my_global, NULL);
-    check(rc >= 0, "Pthread create error");
+    check(pthread_create(&thread_id, NULL, &increment_my_global, NULL) >= 0, "thread create error");
     // wait for thread to finish
-    pthread_join(thread_id, NULL);
+    check(pthread_join(thread_id, NULL) == 0, "error waiting for thread");
     // threads shares global variables -> this one will be incremented
-    log_info("after thread increment: %d", my_global);
-    pthread_exit(NULL);
+    debug_multi("after thread increment: %d", my_global);
+    return 0;
 error:
 	return -1;
 }
