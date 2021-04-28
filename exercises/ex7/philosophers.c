@@ -26,7 +26,7 @@ void* dine(void* id) {
 		// 3. they wait on each other for eternity
 
 		// these next two lines fix the problem
-		if (pthread_mutex_trylock(&chopstick[RIGHT_CHOPSTICK(n)]) != LOCK_SUCCESS) {
+		if(pthread_mutex_trylock(&chopstick[RIGHT_CHOPSTICK(n)]) != LOCK_SUCCESS) {
 			// if lock of the first stick was not successful
 			// wait for another philosopher to finish eating, then take the chopstick
 			pthread_cond_wait(&done_eating, &chopstick[RIGHT_CHOPSTICK(n)]);

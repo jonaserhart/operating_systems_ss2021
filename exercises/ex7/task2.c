@@ -3,7 +3,7 @@
 #include <pthread.h>
 
 #define NUMTHREADS 5
-// hack for 'converting' an integer into a void pointer 
+// hack for 'converting' an integer into a void pointer
 #define INT2VOIDP(i) (void*)(uintptr_t)(i)
 
 pthread_mutex_t mutex;
@@ -91,7 +91,7 @@ int main() {
 	if(pthread_cond_destroy(&cond) != 0) {
 		log_err("error cleaning up phtread_cond");
 	}
-	
+
 	return 0;
 error:
 	return -1;
