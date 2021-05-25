@@ -50,13 +50,20 @@ static void produce() {
 	}
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 	clock_t start, end;
 	// initialize the queue
 	queue = malloc(sizeof(myqueue));
 	myqueue_init(queue);
 	myqueue_push(queue, 1);
 	pthread_t threads[NUMTHREADS];
+	int print_consumers = 0;
+	if (argc == 2) {
+		check(
+		    argv[1][0] == '-' && argv[1][1] == 'c',
+		    "Wrong argument: usage: task2 -c (optional parameter for printing consumer messages)");
+		print_consumers = 1;
+	}
 	// initializations with error checks
 	check(pthread_mutex_init(&mutex, NULL) == 0, "error initializing mutex");
 	check(pthread_cond_init(&cond, NULL) == 0, "error initializing cond");
@@ -77,11 +84,11 @@ int main() {
 		pthread_join(threads[i], &ret);
 		if ((size_t)ret < 0) {
 			// hack for converting a void pointer into an integer
-			log_err("consumer %zu exited with code %zu", i, (size_t)ret);
+			if (print_consumers) log_err("consumer %zu exited with code %zu", i, (size_t)ret);
 			continue;
 		}
 		sum += (size_t)ret;
-		log_info("consumer %zu sum: %zu", i, (size_t)ret);
+		if (print_consumers) log_info("consumer %zu sum: %zu", i, (size_t)ret);
 	}
 	end = clock();
 
