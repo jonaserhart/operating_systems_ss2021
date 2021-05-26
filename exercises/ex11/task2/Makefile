@@ -6,7 +6,9 @@ BINS=$(patsubst %.c,%,$(SOURCES))
 
 all: number_fun libs
 
-libs: double negate square
+number_fun: number_fun
+
+libs: double negate square fib
 
 double: 
 	$(CC) -shared -o double.so -fPIC double.c
@@ -16,6 +18,9 @@ negate:
 
 square: 
 	$(CC) -shared -o square.so -fPIC square.c
+
+fib:
+	$(CC) -shared -o fib.so -fPIC fib.c
 
 clean:
 	rm -rf $(OBJECTS) $(BINS)
