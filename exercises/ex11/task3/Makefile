@@ -1,7 +1,7 @@
-CFLAGS=-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
+CFLAGS=-g -O2 -Wall -Wextra -rdynamic -D_GNU_SOURCE -shared -fPIC $(OPTFLAGS)
 
 my_malloc: 
-	$(CC) -shared -o my_malloc.so -fPIC my_malloc.c
+	$(CC) $(CFLAGS) -o my_malloc.so my_malloc.c
 
 clean:
 	rm -rf my_malloc.so
