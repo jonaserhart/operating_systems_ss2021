@@ -1,3 +1,4 @@
+# Task1
 ## nm and objdump
 
 ### nm:
@@ -40,11 +41,11 @@
                  U this_function_should_increment_a_number_by_ten
 ```
 
-in der letzten Zeile kann ausgelesen werden, dass die gesuchte funktion den namen 'this_function_should_increment_a_number_by_ten' hat.
+int the last line, the function 'this_function_should_increment_a_number_by_ten' is called from the main function of 'some_program'
 
 ### objdump
 
-Auch hier in der `main` funktion ist zu erkennen, dass dort die funktion 'this_function_should_increment_a_number_by_ten' verwendet wird
+Here we can also see, that in the `main` function, the function 'this_function_should_increment_a_number_by_ten' is used
 
 ```bash
 ➜ objdump --disassemble some_program --section=.text
@@ -82,3 +83,56 @@ Disassembly of section .text:
     10fc: eb ca                         jmp     0x10c8 <main+0x28>
     10fe: 66 90                         nop
 ```
+
+## Questions:
+
+ - Is some_library.so the only shared library used by some_program? Use the ldd utility to check.
+   - No, it is not:
+   ```bash
+    -> ldd ./some_program 
+        linux-vdso.so.1 =>  (0x00007ffe80317000)
+        some_library.so => not found
+        libc.so.6 => /lib64/libc.so.6 (0x00007f5be84e2000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007f5be88b0000)
+   ```
+ - Compare the sizes of some_program and my_program - what do you find?
+   - my_program is slightly smaller than some_program:
+   ```bash
+    -> ls -la
+        total 68
+        drwxr-xr-x. 2 csaw4225 lxusers  4096 May 26 18:36 .
+        drwxr-xr-x. 5 csaw4225 lxusers  4096 May 26 17:41 ..
+        -rw-r--r--. 1 csaw4225 lxusers   209 May 26 18:36 Makefile
+        -rw-r--r--. 1 csaw4225 lxusers  3946 May 26 18:30 README.md
+        -rwxr-xr-x. 1 csaw4225 lxusers 12208 May 26 18:36 my_program
+        -rw-r--r--. 1 csaw4225 lxusers   366 May 26 18:36 my_program.c
+        -rw-r--r--. 1 csaw4225 lxusers    78 May 26 17:41 some_library.c
+        -rwxr-xr-x. 1 csaw4225 lxusers  8936 May 26 18:36 some_library.so
+        -rwxr-xr-x. 1 csaw4225 lxusers 16824 May 26 17:41 some_program
+   ```
+ - What is the difference between dynamic and static linking?
+   - dynamic: linking occurs during runtime
+   - static: linking occurs during compilation (last step of compilation)
+
+ - When would you use dynamic linking?
+   - when you want to use a library as a sort of 'plugin' in your code (you dont exactly know where your function is going to be but you know how it looks like)
+ - When would you use static linking?
+   - when you have all the recources you need to include your library as a static link
+ - What is position independent code, and why is it useful?
+   - Position indipendent code indicates that the storage location of a code piece does not affect it's functionality
+   - Example:
+   ```arm
+   # ADRESS: COMMAND
+   # this would not work if this command was at position 150
+   120: JUMP TO 123
+   ...
+   123: SOME MORE COMMANDS
+
+   # this would work if this command was at position 150 (PIC)
+   120: JUMP TO CUR_POSITION + 3
+   ...
+   123: SOME MORE COMMANDS
+   ```
+ - What is the purpose of the LD_LIBRARY_PATH environment variable?
+   - With this variable paths can be defined in which libraries are searched for.
+   - These libraries then have a higher priority than the standard libraries
