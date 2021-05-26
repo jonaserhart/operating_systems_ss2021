@@ -1,5 +1,4 @@
 CFLAGS=-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
-LIBS=-ldl $(OPTLIBS)
 
 SOURCES=$(wildcard *.c)
 OBJECTS=$(patsubst %.c,%.so,$(SOURCES))
@@ -19,7 +18,7 @@ square:
 	$(CC) -shared -o square.so -fPIC square.c
 
 clean:
-	rm -rf build $(OBJECTS) $(BINS)
+	rm -rf $(OBJECTS) $(BINS)
 	find . -name "*.gc" -exec rm {} \;
 	rm -rf `find . -name "*.dSYM" -print`
 
