@@ -8,3 +8,4 @@ submission
 
 #.DS Files
 .DS_Store
+*.dSYM
