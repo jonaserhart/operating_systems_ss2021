@@ -44,7 +44,7 @@ zip:
 	mkdir -p ./submission
 	zip -r ./submission/submission-time-`date +"%H%M"`$(COMMENT).zip $(FILESTOZIP)
 
-LEAKCALL=./program arg1 arg2
+LEAKCALL=./restaurant 1 5 3
 
 leakdoc:
 	rm -f leakdoc.txt

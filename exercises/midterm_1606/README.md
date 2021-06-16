@@ -5,7 +5,7 @@
 
 ### Usage
 
-> `$ ./file <arg1> <arg2>`
+> `$ ./restaurant <enable notifications> <number of guests> <number of cooks>`
 
 ### Files
 
@@ -31,12 +31,3 @@
     - `leakdoc`: (for macOS users) runs 'leaks' and saves the output in a file called 'leakdoc.txt'
     - `valgrinddoc` (for linux users) runs 'valgrind' and saves the output in a file called 'leakdoc.txt'
 
-## Known Bugs ordered by severity
-
-### 1) Example bug:
-
-- Description  
-description
-
-- Possible cause:  
-possible cause
