@@ -19,7 +19,11 @@ pthread_cond_t cond;
 
 void* produce(void* arg) {
 	int thread_index = *((int*)arg);
+	unsigned seed = (unsigned)pthread_self();
+	srand(seed);
+	double laziness = (double)rand() / (double)RAND_MAX;
 	debug("Got index arg %d", thread_index);
+	debug("Got laziness %ld", laziness);
 	for (;;) {
 		// lock the mutex
 		pthread_mutex_lock(&mutex);
@@ -34,7 +38,7 @@ void* produce(void* arg) {
 				// wait for enough knobs to be available
 				pthread_cond_wait(&cond, &mutex);
 			// make door
-			sleep((10 + 0.4 * 60) / 1000);
+			sleep((10 + laziness * 90) / 1000);
 			// knobs are used to make a door
 			knobs_ready -= 2;
 			doors_to_produce--;
@@ -42,7 +46,7 @@ void* produce(void* arg) {
 			if (knobs_to_produce <= 0 || doors_to_produce <= 0) {
 				break;
 			}
-			sleep((10 + 0.4 * 30) / 1000);
+			sleep((10 + laziness * 30) / 1000);
 			// make a knob
 			knobs_ready++;
 			knobs_to_produce--;
@@ -80,15 +84,19 @@ int main(int argc, char* argv[]) {
 	check(is_number(argv[1]), "Argument '%s' is not a number", argv[1]);
 	check(is_number(argv[2]), "Argument '%s' is not a number", argv[2]);
 
+	int reassign = atol(argv[1]);
 	int no_doors = atol(argv[2]);
 	int no_knobs = no_doors * 2;
+
+	int no_knob_workers = 17;
+	int no_door_workers = MAX_THREADS - no_knob_workers;
 
 	// assign workers and doors_to_produce
 	pthread_mutex_lock(&mutex);
 	doors_to_produce = no_doors;
 	knobs_to_produce = no_knobs;
 	for (int i = 0; i < MAX_THREADS; i++) {
-		assignments[i] = i < 2 ? KNOBS : DOORS;
+		assignments[i] = i < no_knob_workers ? KNOBS : DOORS;
 		debug("assigned worker %d", i);
 	}
 	pthread_mutex_unlock(&mutex);
@@ -114,41 +122,67 @@ int main(int argc, char* argv[]) {
 	// production loop
 	int elapsed = 0;
 	for (;;) {
-		if (doors_to_produce <= 0) {
-			log_info("Finished!");
-			break;
-		}
+		sleep(1);
 		// assign workers
 		elapsed++;
 		pthread_mutex_lock(&mutex);
+
+		if (doors_to_produce <= 0) {
+			log_success("Finished!");
+			break;
+		}
 		int doors_produced = no_doors - doors_to_produce;
 		int knobs_produced = no_knobs - knobs_to_produce;
 		debug("Doors still to produce: %d", doors_to_produce);
 		debug("Knobs still to produce: %d", knobs_to_produce);
 		log_info("Producing doors: %.2f /s, knobs: %.2f / s",
-		         ((double)(doors_produced) / (double)elapsed),
-		         ((double)(knobs_produced) / (double)elapsed));
-		if (knobs_produced / doors_produced >= 1.1 || doors_produced == 0) {
-			for (int i = 0; i < MAX_THREADS; i++) {
-				if (assignments[i] == KNOBS) {
-					assignments[i] = DOORS;
-					log_info("\t reassigned worker %d to make doors", i);
-					break;
+		         doors_to_produce == 0 ? 0.0 : ((double)(doors_produced) / (double)elapsed),
+		         knobs_to_produce == 0 ? 0.0 : ((double)(knobs_produced) / (double)elapsed));
+
+		int reassigned = 0;
+		if (reassign) {
+			if (knobs_produced / doors_produced >= 1.1 || doors_produced == 0) {
+				for (int i = 0; i < MAX_THREADS; i++) {
+					if (assignments[i] == KNOBS) {
+						assignments[i] = DOORS;
+						no_door_workers++;
+						no_knob_workers--;
+						debug("\t reassigned worker %d to make doors", i);
+						reassigned = 1;
+						break;
+					}
 				}
 			}
-		}
-		if (doors_produced / knobs_produced >= 1.1) {
-			for (int i = 0; i < MAX_THREADS; i++) {
-				if (assignments[i] == DOORS) {
-					assignments[i] = KNOBS;
-					log_info("\t reassigned worker %d to make knobs", i);
-					break;
+			if (doors_produced / knobs_produced >= 1.1) {
+				for (int i = 0; i < MAX_THREADS; i++) {
+					if (assignments[i] == DOORS) {
+						assignments[i] = KNOBS;
+						no_knob_workers++;
+						no_door_workers--;
+						debug("\t reassigned worker %d to make knobs", i);
+						reassigned = 1;
+						break;
+					}
+				}
+			}
+			if (knobs_to_produce == 0) {
+				// reassign all knob producers to produce doors
+				for (int i = 0; i < MAX_THREADS; i++) {
+					if (assignments[i] == KNOBS) {
+						assignments[i] = DOORS;
+						no_door_workers++;
+						no_knob_workers--;
+						reassigned = 1;
+						debug("\t reassigned worker %d to make doors", i);
+					}
 				}
 			}
 		}
 		pthread_mutex_unlock(&mutex);
-
-		sleep(1);
+		if (reassigned) {
+			log_info("\t reassignment: %d making doors, %d making knobs", no_door_workers,
+			         no_knob_workers);
+		}
 	}
 
 	for (int i = 0; i < MAX_THREADS; i++) {
