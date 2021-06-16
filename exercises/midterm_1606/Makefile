@@ -1,4 +1,4 @@
-CFLAGS=-g -O2 -Wall -Wextra -pthread -std=c99 -DNDEBUG $(OPTFLAGS)
+CFLAGS=-g -O2 -Wall -Wextra -pthread -std=c99 $(OPTFLAGS)
 
 # get all .c files
 SOURCES=$(wildcard *.c)
@@ -12,11 +12,14 @@ HEADERS=$(wildcard *.h)
 FILESTOZIP= $(SOURCES) $(HEADERS) Makefile .clang-format README.md
 
 # make all c files into object files
-all: $(OBJECTS)
+all: CFLAGS+= -DNDEBUG
+all: objs
 
 # compile without NDEBUG file for debugging
-dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra -pthread -std=c99 $(OPTFLAGS)
-dev: all
+dev: objs
+
+# make objects
+objs: $(OBJECTS)
 
 # clear up all object files, *.dSYM files and submission folder
 clean:
@@ -39,4 +42,16 @@ check:
 # make a zip file for submssion
 zip:
 	mkdir -p ./submission
-	zip -r ./submission/submission-time-`date +"%H%M"`.zip $(FILESTOZIP)
+	zip -r ./submission/submission-time-`date +"%H%M"`$(COMMENT).zip $(FILESTOZIP)
+
+LEAKCALL=./program arg1 arg2
+
+leakdoc:
+	rm -f leakdoc.txt
+	touch leakdoc.txt
+	leaks --atExit -- $(LEAKCALL) > leakdoc.txt
+
+valgrinddoc:
+	rm -f leakdoc.txt
+	touch leakdoc.txt
+	valgrind --leak-check=yes $(LEAKCALL) > leakdoc.txt

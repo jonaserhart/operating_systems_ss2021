@@ -77,9 +77,11 @@
  * logs an error message and jumps to 'error' label
  */
 #define sentinel(M, ...) \
-	log_err(M, ##__VA_ARGS__); \
-	errno = 0; \
-	goto error
+	{ \
+		log_err(M, ##__VA_ARGS__); \
+		errno = 0; \
+		goto error; \
+	}
 
 /**
  * check for NULL-pointer and print 'out of memory' on failure, then jumps to 'error' label
