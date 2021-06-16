@@ -7,7 +7,7 @@ This repository contains solutions for the course 'Operating Systems' of 2021.
 | Date       | Exc              | Topic                         |
 | ---------- | ---------------- | ----------------------------- |
 | 2021-03-03 | -                |                               |
-| 2021-03-10 | [1](exercise01)  | Shell scripting               |
+| 2021-03-10 | [1](exercises/ex1)  | Shell scripting               |
 | 2021-03-17 | [2](exercise02)  | Binary Search Tree            |
 | 2021-03-24 | [3](exercise03)  | Processes, signal handling    |
 | 2021-04-14 | [4](exercise04)  | FIFOs, pipes & sockets        |
