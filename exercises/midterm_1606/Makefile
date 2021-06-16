@@ -1,5 +1,3 @@
-# this file was prepaired before the exam
-
 CFLAGS=-g -O2 -Wall -Wextra -pthread -std=c99 -DNDEBUG $(OPTFLAGS)
 
 # get all .c files

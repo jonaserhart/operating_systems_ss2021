@@ -19,7 +19,7 @@
 
 `Makefile`:
   - commands:
-    - `all`: make all `.c` files into object files for production
+    - `all`: make all `.c` files into object files for production (first entry, so just typing `make` will suffice)
     - `dev`: compile all `.c` files into object files without the `NDEBUG` flag for debugging with `dbg.h`
     - `clean`: cleans all object files and `*.dSYM` files that apple likes to make
     - `cleansub`: clean up the submission folder
