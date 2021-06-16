@@ -2,9 +2,9 @@
 #define _BSTREE_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 
 /**
  * Stores a binary sorted tree of values, in which each element may only
@@ -20,7 +20,7 @@ typedef float value_t;
 
 /**
  * This macro defines how a value within the tree should be printed.
- * 
+ *
  * You can use this within a printf format string like so:
  * printf("Value: " VALUE_T_FORMAT "\n", my_value);
  */
@@ -77,7 +77,7 @@ int32_t bstree_size(const bstree* t);
 
 /**
  * Prints the given bstree `t` to the supplied output stream `out`.
- * 
+ *
  * output format: [<LEFT>, VAL, <RIGHT>] : <SIZE>
  * example empty: [ NIL ] : 0
  * example 3,4,7 in a balanced tree: [[3], 4, [7]] : 3

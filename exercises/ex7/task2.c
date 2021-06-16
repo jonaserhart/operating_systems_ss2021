@@ -14,10 +14,10 @@ myqueue* queue;
 static void* consume() {
 	int sum = 0;
 	int val = -1;
-	while(val != 0) {
+	while (val != 0) {
 		// lock the mutex so other threads cant access the queue
 		pthread_mutex_lock(&mutex);
-		while(myqueue_is_empty(queue)) {
+		while (myqueue_is_empty(queue)) {
 			// if empty wait for another value to be inserted into the queue
 			pthread_cond_wait(&cond, &mutex);
 		}
@@ -33,14 +33,14 @@ static void* consume() {
 // produces values into the queue
 static void produce() {
 	// produce the '1' values
-	for(int i = 0; i < 9999; i++) {
+	for (int i = 0; i < 9999; i++) {
 		pthread_mutex_lock(&mutex);
 		myqueue_push(queue, 1);
 		pthread_cond_signal(&cond);
 		pthread_mutex_unlock(&mutex);
 	}
 	// produce the stop values
-	for(int i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		pthread_mutex_lock(&mutex);
 		myqueue_push(queue, 0);
 		pthread_cond_signal(&cond);
@@ -59,7 +59,7 @@ int main() {
 	check(pthread_cond_init(&cond, NULL) == 0, "error initializing cond");
 
 	// create all threads
-	for(size_t i = 0; i < NUMTHREADS; i++) {
+	for (size_t i = 0; i < NUMTHREADS; i++) {
 		pthread_create(&threads[i], NULL, &consume, NULL);
 	}
 
@@ -69,10 +69,10 @@ int main() {
 	int sum = 0;
 
 	// wait for all threads and print the result
-	for(size_t i = 0; i < NUMTHREADS; i++) {
+	for (size_t i = 0; i < NUMTHREADS; i++) {
 		void* ret = NULL;
 		pthread_join(threads[i], &ret);
-		if((size_t)ret < 0) {
+		if ((size_t)ret < 0) {
 			// hack for converting a void pointer into an integer
 			log_err("consumer %zu exited with code %zu", i, (size_t)ret);
 			continue;
@@ -85,10 +85,10 @@ int main() {
 	log_success("Final sum: %d", sum);
 
 	// clean up
-	if(pthread_mutex_destroy(&mutex) != 0) {
+	if (pthread_mutex_destroy(&mutex) != 0) {
 		log_err("error cleaning up phtread_mutex");
 	}
-	if(pthread_cond_destroy(&cond) != 0) {
+	if (pthread_cond_destroy(&cond) != 0) {
 		log_err("error cleaning up phtread_cond");
 	}
 

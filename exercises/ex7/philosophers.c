@@ -19,14 +19,14 @@ pthread_cond_t done_eating;
 
 void* dine(void* id) {
 	int n = (int)(intptr_t)id;
-	for(int i = 0; i < EAT_ITERATIONS; ++i) {
+	for (int i = 0; i < EAT_ITERATIONS; ++i) {
 		// this is where a deadlock could have occured
 		// 1. 1st philosopher takes the right chopstick
 		// 2. 2nd philosopher takes the left chopstick
 		// 3. they wait on each other for eternity
 
 		// these next two lines fix the problem
-		if(pthread_mutex_trylock(&chopstick[RIGHT_CHOPSTICK(n)]) != LOCK_SUCCESS) {
+		if (pthread_mutex_trylock(&chopstick[RIGHT_CHOPSTICK(n)]) != LOCK_SUCCESS) {
 			// if lock of the first stick was not successful
 			// wait for another philosopher to finish eating, then take the chopstick
 			pthread_cond_wait(&done_eating, &chopstick[RIGHT_CHOPSTICK(n)]);
@@ -44,19 +44,19 @@ void* dine(void* id) {
 }
 
 int main() {
-	for(int i = 0; i < NUM_PHILOSOPHER; ++i) {
+	for (int i = 0; i < NUM_PHILOSOPHER; ++i) {
 		pthread_mutex_init(&chopstick[i], NULL);
 	}
 
-	for(int i = 0; i < NUM_PHILOSOPHER; ++i) {
+	for (int i = 0; i < NUM_PHILOSOPHER; ++i) {
 		pthread_create(&philosopher[i], NULL, dine, (void*)(intptr_t)i);
 	}
 
-	for(int i = 0; i < NUM_PHILOSOPHER; ++i) {
+	for (int i = 0; i < NUM_PHILOSOPHER; ++i) {
 		pthread_join(philosopher[i], NULL);
 	}
 
-	for(int i = 0; i < NUM_PHILOSOPHER; ++i) {
+	for (int i = 0; i < NUM_PHILOSOPHER; ++i) {
 		pthread_mutex_destroy(&chopstick[i]);
 	}
 

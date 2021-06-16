@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.rmd": "markdown",
+        "iterator": "c",
+        "__mutex_base": "c",
+        "mutex": "c",
+        "version": "c"
+    }
+}

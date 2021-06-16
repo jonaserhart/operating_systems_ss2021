@@ -47,7 +47,7 @@ error:
  * Destroys and deallocates all memory for the given tree 't'
  */
 void bstree_destroy(bstree* t) {
-	if(t == NULL) {
+	if (t == NULL) {
 		return;
 	}
 	bstree_destroy(t->left);
@@ -67,20 +67,20 @@ void bstree_insert(bstree* t, value_t v) {
 	// check if v is a number
 	check(isnan(v) == 0, "nan passed");
 	// if the value is found
-	if(t->value == v) {
+	if (t->value == v) {
 		// do nothing
 		return;
 	}
 	// t is newly created root or other node with no value
-	if(isnan(t->value)) {
+	if (isnan(t->value)) {
 		// set the value
 		t->value = v;
 		return;
 	}
 	// if the value cannot be inserted here, search for a spot to insert the value
-	if(t->value < v) {
+	if (t->value < v) {
 		// value has to be inserted in the right subtree
-		if(t->right == NULL) {
+		if (t->right == NULL) {
 			// if there is a spot to the right
 			// insert the value
 			t->right = bstree_create_with_value(v);
@@ -90,7 +90,7 @@ void bstree_insert(bstree* t, value_t v) {
 		}
 	} else {
 		// value has to be inserted in the left subtree
-		if(t->left == NULL) {
+		if (t->left == NULL) {
 			// if there is a spot to the left
 			// insert the value
 			t->left = bstree_create_with_value(v);
@@ -108,7 +108,7 @@ error:
  * @param t: tree to search the maxmimum node in
  */
 bstree* bstree_maximum_node(bstree* t) {
-	if(t->right == NULL) {
+	if (t->right == NULL) {
 		return t;
 	}
 	return bstree_maximum_node(t->right);
@@ -125,25 +125,25 @@ bstree* bstree_maximum_node(bstree* t) {
  * @param v: value to remove
  */
 static bstree* bstree_remove_aux(bstree* t, value_t v) {
-	if(t == NULL) {
+	if (t == NULL) {
 		return NULL;
 	}
 	// search for right value
-	if(v > t->value) {
+	if (v > t->value) {
 		t->right = bstree_remove_aux(t->right, v);
-	} else if(v < t->value) {
+	} else if (v < t->value) {
 		t->left = bstree_remove_aux(t->left, v);
 	} else {
 		// node with given value has been found
-		if(t->left == NULL && t->right == NULL) {
+		if (t->left == NULL && t->right == NULL) {
 			// if tree has no children, just destroy the tree
 			bstree_destroy(t);
 			return NULL;
-		} else if(t->left == NULL || t->right == NULL) {
+		} else if (t->left == NULL || t->right == NULL) {
 			// if tree has only one child
 			bstree* temp;
 			// find the non-NULL child
-			if(t->left == NULL) {
+			if (t->left == NULL) {
 				temp = t->right;
 			} else {
 				temp = t->left;
@@ -184,16 +184,16 @@ error:
  */
 bool bstree_contains(const bstree* t, value_t v) {
 	check(isnan(v) == 0, "nan passed");
-	if(t == NULL) {
+	if (t == NULL) {
 		return false;
 	}
-	if(isnan(t->value)) {
+	if (isnan(t->value)) {
 		return false;
 	}
-	if(t->value < v) {
+	if (t->value < v) {
 		return bstree_contains(t->right, v);
 	}
-	if(t->value > v) {
+	if (t->value > v) {
 		return bstree_contains(t->left, v);
 	}
 	return true;
@@ -207,7 +207,7 @@ error:
 value_t bstree_minimum(const bstree* t) {
 	check(t != NULL, "passed NULL for 't'");
 	// if no more left children, return value
-	if(t->left == NULL) {
+	if (t->left == NULL) {
 		return t->value;
 	}
 	// else continue search
@@ -222,7 +222,7 @@ error:
 value_t bstree_maximum(const bstree* t) {
 	check(t != NULL, "passed NULL for 't'");
 	// if no more right children return value
-	if(t->right == NULL) {
+	if (t->right == NULL) {
 		return t->value;
 	}
 	// else continue search
@@ -237,13 +237,13 @@ error:
  * @param v: value to calculate depth for
  */
 static int32_t bstree_depth_aux(const bstree* t, value_t v) {
-	if(t == NULL) {
+	if (t == NULL) {
 		return -1;
 	}
-	if(t->value == v) {
+	if (t->value == v) {
 		return 0;
 	}
-	if(t->value < v) {
+	if (t->value < v) {
 		return 1 + bstree_depth_aux(t->right, v);
 	} else {
 		return 1 + bstree_depth_aux(t->left, v);
@@ -256,7 +256,7 @@ static int32_t bstree_depth_aux(const bstree* t, value_t v) {
  */
 int32_t bstree_depth(const bstree* t, value_t v) {
 	check(isnan(v) == 0, "nan passed");
-	if(bstree_contains(t, v) == 0) {
+	if (bstree_contains(t, v) == 0) {
 		return -1;
 	}
 	return bstree_depth_aux(t, v);
@@ -273,10 +273,10 @@ error:
  * size of a tree on each operation in c
  */
 int32_t bstree_size(const bstree* t) {
-	if(t == NULL) {
+	if (t == NULL) {
 		return 0;
 	}
-	if(isnan(t->value)) {
+	if (isnan(t->value)) {
 		return 0;
 	} else {
 		return (bstree_size(t->left) + 1 + bstree_size(t->right));
@@ -290,14 +290,14 @@ int32_t bstree_size(const bstree* t) {
  */
 static void bstree_print_aux(const bstree* t, FILE* out) {
 	fprintf(out, "[");
-	if(t->left != NULL) {
+	if (t->left != NULL) {
 		// print left side
 		bstree_print_aux(t->left, out);
 		fprintf(out, ", ");
 	}
 	// print value
 	printf(VALUE_T_FORMAT, t->value);
-	if(t->right != NULL) {
+	if (t->right != NULL) {
 		// print right side
 		fprintf(out, ", ");
 		bstree_print_aux(t->right, out);
@@ -314,7 +314,7 @@ static void bstree_print_aux(const bstree* t, FILE* out) {
  */
 void bstree_print(const bstree* t, FILE* out) {
 	check(out != NULL, "no stream passed");
-	if(t == NULL || isnan(t->value)) {
+	if (t == NULL || isnan(t->value)) {
 		fprintf(out, "[ NIL ] : 0\n");
 		return;
 	}

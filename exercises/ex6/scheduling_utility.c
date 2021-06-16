@@ -16,9 +16,9 @@ static int match_lines(FILE* fp, simulation_data_t* data) {
 	int line = 0;
 	process_t tmp = { 0 };
 
-	while(fscanf(fp, "%c;%d;%d;%d\n", (char*)&tmp.name, (int*)&tmp.arrival_time,
-	             (int*)&tmp.service_time, (int*)&tmp.priority) == 4) {
-		if(data) {
+	while (fscanf(fp, "%c;%d;%d;%d\n", (char*)&tmp.name, (int*)&tmp.arrival_time,
+	              (int*)&tmp.service_time, (int*)&tmp.priority) == 4) {
+		if (data) {
 			memcpy(data->procs + line, &tmp, sizeof(tmp));
 		}
 		++line;
@@ -29,12 +29,12 @@ static int match_lines(FILE* fp, simulation_data_t* data) {
 
 static simulation_data_t* allocate_simulation_data(size_t num_procs) {
 	simulation_data_t* data = malloc(sizeof(*data));
-	if(data == NULL) {
+	if (data == NULL) {
 		return NULL;
 	}
 	data->num_processes = num_procs;
 	data->procs = malloc(sizeof(*data->procs) * data->num_processes);
-	if(data->procs == NULL) {
+	if (data->procs == NULL) {
 		free(data);
 		return NULL;
 	}
@@ -44,12 +44,12 @@ static simulation_data_t* allocate_simulation_data(size_t num_procs) {
 simulation_data_t* read_simulation_data(const char* input_file) {
 	assert(input_file);
 	FILE* fp = fopen(input_file, "r");
-	if(!fp) {
+	if (!fp) {
 		return NULL;
 	}
 
 	simulation_data_t* data = allocate_simulation_data(match_lines(fp, NULL));
-	if(data == NULL) {
+	if (data == NULL) {
 		fclose(fp);
 		return NULL;
 	}
@@ -62,7 +62,7 @@ simulation_data_t* read_simulation_data(const char* input_file) {
 void print_simulation_data(FILE* out, const simulation_data_t* data) {
 	fprintf(out, "Simulation Data:\n");
 	fprintf(out, "name\tarrival_time\tservice_time\tpriority\n");
-	for(int i = 0; i < data->num_processes; ++i) {
+	for (int i = 0; i < data->num_processes; ++i) {
 		process_t proc = data->procs[i];
 		printf("%c    \t%12u\t%12u\t%8u\n", proc.name, proc.arrival_time, proc.service_time,
 		       proc.priority);
@@ -79,7 +79,7 @@ void print_schedule(FILE* out, schedule_t sched, const simulation_data_t* data) 
 
 	// header
 	fprintf(out, "  ");
-	for(int i = 0; i < sched.num_timesteps; i++) {
+	for (int i = 0; i < sched.num_timesteps; i++) {
 		fprintf(out, " %2d ", i);
 	}
 	fprintf(out, "\n");
@@ -87,16 +87,16 @@ void print_schedule(FILE* out, schedule_t sched, const simulation_data_t* data) 
 	int start_time[256];
 	int end_time[256] = { 0 };
 
-	for(int i = 0; i < 256; ++i) {
+	for (int i = 0; i < 256; ++i) {
 		start_time[i] = sched.num_timesteps;
 	}
 
-	for(int i = 0; i < sched.num_timesteps; i++) {
+	for (int i = 0; i < sched.num_timesteps; i++) {
 		int cur = (int)sched.proc_names[i];
-		if(i < start_time[cur]) {
+		if (i < start_time[cur]) {
 			start_time[cur] = i;
 		}
-		if(i > end_time[cur]) {
+		if (i > end_time[cur]) {
 			end_time[cur] = i;
 		}
 	}
@@ -107,10 +107,10 @@ void print_schedule(FILE* out, schedule_t sched, const simulation_data_t* data) 
 	const char* ansi_reset = is_terminal ? "\033[0m" : "";
 
 	// schedule
-	for(int i = 0; i < data->num_processes; ++i) {
+	for (int i = 0; i < data->num_processes; ++i) {
 		const process_t* proc = &data->procs[i];
 		fprintf(out, "%c:", proc->name);
-		for(int t = 0; t < sched.num_timesteps; t++) {
+		for (int t = 0; t < sched.num_timesteps; t++) {
 			const bool is_arriving = t == proc->arrival_time;
 			const bool is_last_t = t == end_time[(int)proc->name];
 			const char* color = is_arriving ? ansi_green : (is_last_t ? ansi_red : "");
@@ -124,7 +124,7 @@ void print_schedule(FILE* out, schedule_t sched, const simulation_data_t* data) 
 	int response_time_sum = 0;
 	int turnaround_time_sum = 0;
 	fprintf(out, "name\tresponse_time\tturnaround_time\n");
-	for(int i = 0; i < data->num_processes; ++i) {
+	for (int i = 0; i < data->num_processes; ++i) {
 		const int arrival_time = data->procs[i].arrival_time;
 		const int name = data->procs[i].name;
 		const int rt = start_time[name] - arrival_time;

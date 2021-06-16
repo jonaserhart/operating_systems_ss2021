@@ -6,10 +6,10 @@
 
 double mc_pi(int64_t S) {
 	int64_t in_count = 0;
-	for(int64_t i = 0; i < S; ++i) {
+	for (int64_t i = 0; i < S; ++i) {
 		const double x = rand() / (double)RAND_MAX;
 		const double y = rand() / (double)RAND_MAX;
-		if(x * x + y * y <= 1.f) {
+		if (x * x + y * y <= 1.f) {
 			in_count++;
 		}
 	}
@@ -17,7 +17,7 @@ double mc_pi(int64_t S) {
 }
 
 int main(int argc, char* argv[]) {
-	if(argc != 3) {
+	if (argc != 3) {
 		log_warn("USAGE: task1 <Number of Processes> <Number of computations>");
 		return -1;
 	}
@@ -36,10 +36,10 @@ int main(int argc, char* argv[]) {
 	      "Could not parse 'number of computations' as an integer greater than 0, got: %d",
 	      number_of_computations);
 
-	for(i = 0; i < number_of_processes; i++) {
+	for (i = 0; i < number_of_processes; i++) {
 		pids[i] = fork();
 		check(pids[i] >= 0, "Fork error");
-		if(pids[i] == 0) {
+		if (pids[i] == 0) {
 			// is a child process that was successfully created
 			// seed random number
 			srand(getpid());
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 			return 0;
 		}
 	}
-	while(number_of_processes > 0) {
+	while (number_of_processes > 0) {
 		wait(NULL);
 		number_of_processes--;
 	}

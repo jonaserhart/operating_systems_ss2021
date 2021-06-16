@@ -16,7 +16,7 @@ int main() {
 
 	pid = fork();
 	check(pid != -1, "fork failed");
-	if(pid == 0) {
+	if (pid == 0) {
 		// child
 		// increment copied global variable (this is not the original)
 		debug_multi("incrementing...");

@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 int main(int argc, char* argv[]) {
-	if(argc <= 1) {
+	if (argc <= 1) {
 		log_err("USAGE: ./task1_server <List of clients>\n");
 		return -1;
 	}
@@ -20,14 +20,14 @@ int main(int argc, char* argv[]) {
 	// save files for later i this variable
 	char* files[number_of_pipes];
 	// intialize with NULL
-	for(int i = 0; i < number_of_pipes; i++) {
+	for (int i = 0; i < number_of_pipes; i++) {
 		files[i] = NULL;
 	}
 
 	printf("Server is up\n");
 
 	// make fifos for each client
-	for(int i = 0; i < number_of_pipes; i++) {
+	for (int i = 0; i < number_of_pipes; i++) {
 		// calculate size of the filename with path
 		char name[9 + (sizeof(argv[i + 1]))];
 		// set string to all zeroes -> no undefined behaviour
@@ -58,14 +58,14 @@ int main(int argc, char* argv[]) {
 	char buffer[BUFSIZ];
 	memset(buffer, '\0', sizeof(buffer));
 	int num_pipes_left = number_of_pipes;
-	while(num_pipes_left > 0) {
+	while (num_pipes_left > 0) {
 		check(poll(pollfds, number_of_pipes, -1) >= 0, "Polling error");
-		for(int i = 0; i < number_of_pipes; i++) {
+		for (int i = 0; i < number_of_pipes; i++) {
 			// find the pipe with the data
-			if(pollfds[i].revents & POLLIN) {
+			if (pollfds[i].revents & POLLIN) {
 				// read the written pipe
-				if(read(pollfds[i].fd, buffer, sizeof(buffer)) > 0) {
-					if(strcmp(buffer, "\n") != 0) {
+				if (read(pollfds[i].fd, buffer, sizeof(buffer)) > 0) {
+					if (strcmp(buffer, "\n") != 0) {
 						printf("%s: %s \n", argv[i + 1], buffer);
 						memset(buffer, '\0', sizeof(buffer));
 					} else {
@@ -77,9 +77,9 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	// cleanup
-	for(int i = 0; i < number_of_pipes; i++) {
+	for (int i = 0; i < number_of_pipes; i++) {
 		debug("unlinking fifo %s", files[i]);
-		if(unlink(files[i]) < 0) {
+		if (unlink(files[i]) < 0) {
 			log_err("error unlinking fifo '%s', please unlink manually", files[i]);
 		}
 		free(files[i]);
@@ -88,10 +88,10 @@ int main(int argc, char* argv[]) {
 	return 0;
 // cleanup on error
 error:
-	for(int i = 0; i < number_of_pipes; i++) {
-		if(files[i] != NULL) {
+	for (int i = 0; i < number_of_pipes; i++) {
+		if (files[i] != NULL) {
 			debug("unlinking fifo %s", files[i]);
-			if(unlink(files[i]) < 0) {
+			if (unlink(files[i]) < 0) {
 				log_err("error unlinking fifo '%s', please unlink manually", files[i]);
 			}
 			free(files[i]);

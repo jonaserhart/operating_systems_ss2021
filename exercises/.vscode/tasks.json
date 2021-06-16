@@ -6,6 +6,25 @@
             "type": "shell",
             "command": "make",
             "args":["${fileDirname}/${fileBasenameNoExtension}"],
+        },
+        {
+            "label": "format",
+            "dependsOn": [
+                "formatcfiles",
+                "formatheaderfiles",
+            ],
+        },
+        {
+            "label": "formatcfiles",
+            "type": "shell",
+            "command": "find",
+            "args":[".", "-regex", "'\\(.*\\.\\(c\\)\\)'", "-exec", "clang-format", "-i", "{}", "\\;"],
+        },
+        {
+            "label": "formatheaderfiles",
+            "type": "shell",
+            "command": "find",
+            "args":[".", "-regex", "'\\(.*\\.\\(h\\)\\)'", "-exec", "clang-format", "-i", "{}", "\\;"],
         }
     ],
 }

@@ -13,7 +13,7 @@
 
 void parse_args(char* str, char* (*result)[MAX_ARGS]) {
 	memset(*result, 0, sizeof(char*) * MAX_ARGS);
-	for(int i = 0; i < MAX_ARGS - 1; ++i, str = NULL) {
+	for (int i = 0; i < MAX_ARGS - 1; ++i, str = NULL) {
 		(*result)[i] = strtok(str, " ");
 	}
 }
@@ -26,15 +26,15 @@ int execute(char** argv) {
 	pid_t pid;
 	int status;
 
-	if((pid = fork()) < 0) {
+	if ((pid = fork()) < 0) {
 		return -1;
-	} else if(pid == 0) {
-		if(execvp(argv[0], argv) != 0) {
+	} else if (pid == 0) {
+		if (execvp(argv[0], argv) != 0) {
 			return -1;
 		}
 		return 0;
 	} else {
-		while(wait(&status) != pid)
+		while (wait(&status) != pid)
 			;
 	}
 	return status;
@@ -43,7 +43,7 @@ int execute(char** argv) {
 int main() {
 	struct sockaddr_un server, client;
 	char buffer[BUFSIZ];
-    // open socket
+	// open socket
 	int socket_filedescriptor = socket(PF_LOCAL, SOCK_STREAM, 0);
 	check(socket_filedescriptor >= 0, "Error opening socket");
 	server.sun_family = AF_UNIX;
@@ -51,7 +51,7 @@ int main() {
 	strcpy(server.sun_path, "/tmp/socket.path");
 
 	int bind_rc = bind(socket_filedescriptor, (struct sockaddr*)&server, (socklen_t)sizeof(server));
-	if(bind_rc < 0) {
+	if (bind_rc < 0) {
 		// if last time was a dirty exit
 		unlink("/tmp/socket.path");
 		bind_rc = bind(socket_filedescriptor, (struct sockaddr*)&server, (socklen_t)sizeof(server));
@@ -70,19 +70,19 @@ int main() {
 	// redirect outputs
 	dup2(newsocketfd, STDOUT_FILENO);
 	dup2(newsocketfd, STDERR_FILENO);
-	for(;;) {
+	for (;;) {
 		bzero(buffer, BUFSIZ);
-		if(read(newsocketfd, buffer, BUFSIZ) < 0) {
+		if (read(newsocketfd, buffer, BUFSIZ) < 0) {
 			// if invalid, continue
 			continue;
 		}
-		if(strcmp("", buffer) == 0) {
+		if (strcmp("", buffer) == 0) {
 			// if empty break
 			break;
 		}
 		char* args[MAX_ARGS];
 		parse_args(buffer, &args);
-		if(execute(args) != 0) {
+		if (execute(args) != 0) {
 			write(newsocketfd, "command failed", 15);
 		}
 	}

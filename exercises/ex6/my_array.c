@@ -13,13 +13,13 @@ typedef struct array {
 
 void* my_array_init() {
 	my_array* array = malloc(sizeof(*array));
-	if(!array) {
+	if (!array) {
 		return NULL;
 	}
 	array->capacity = ARRAY_INIT_CAPACITY;
 	array->size = 0;
 	array->items = malloc(sizeof(void*) * array->capacity);
-	if(!array->items) {
+	if (!array->items) {
 		free(array);
 		return NULL;
 	}
@@ -34,7 +34,7 @@ size_t my_array_size(my_array* array) {
 static int array_resize(my_array* array, size_t capacity) {
 	assert(array);
 	void** items = realloc(array->items, sizeof(*items) * capacity);
-	if(!items) {
+	if (!items) {
 		return -1;
 	}
 	array->items = items;
@@ -44,25 +44,25 @@ static int array_resize(my_array* array, size_t capacity) {
 
 void my_array_push_back(my_array* array, void* item) {
 	assert(array);
-	if(array->capacity == array->size) array_resize(array, array->capacity * 2);
+	if (array->capacity == array->size) array_resize(array, array->capacity * 2);
 	array->items[array->size++] = item;
 }
 
 void* my_array_get(my_array* array, size_t idx) {
 	assert(array);
-	if(idx < array->size) return array->items[idx];
+	if (idx < array->size) return array->items[idx];
 	return NULL;
 }
 
 void my_array_delete(my_array* array, size_t idx) {
 	assert(array);
-	if(idx >= array->size) return;
+	if (idx >= array->size) return;
 
 	memmove(array->items + idx, array->items + (idx + 1),
 	        sizeof(*array->items) * (array->size - (idx + 1)));
 	--array->size;
 
-	if(array->size > 0 && array->size == array->capacity / 4)
+	if (array->size > 0 && array->size == array->capacity / 4)
 		array_resize(array, array->capacity / 2);
 }
 

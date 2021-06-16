@@ -57,7 +57,7 @@
  * met
  */
 #define check(A, M, ...) \
-	if(!(A)) { \
+	if (!(A)) { \
 		log_err(M, ##__VA_ARGS__); \
 		errno = 0; \
 		goto error; \
@@ -68,7 +68,7 @@
  * not met handy for recursion or loops
  */
 #define check_continue(A, M, ...) \
-	if(!(A)) { \
+	if (!(A)) { \
 		log_info(M, ##__VA_ARGS__); \
 		goto cont; \
 	}
@@ -92,7 +92,7 @@
  * checks a condition and if it fails, create a debug log then jump to 'error' label
  */
 #define check_debug(A, M, ...) \
-	if(!(A)) { \
+	if (!(A)) { \
 		debug(M, ##__VA_ARGS__); \
 		errno = 0; \
 		goto error; \
