@@ -1,0 +1,25 @@
+[32m[SUCCESS] Finished!
+[0mProcess:         factory [43195]
+Path:            /Users/USER/*/factory
+Load Address:    0x102158000
+Identifier:      factory
+Version:         ???
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  leaks [43194]
+
+Date/Time:       2021-06-16 15:16:23.133 +0200
+Launch Time:     2021-06-16 15:16:21.499 +0200
+OS Version:      macOS 11.4 (20F71)
+Report Version:  7
+Analysis Tool:   /Applications/Xcode.app/Contents/Developer/usr/bin/leaks
+Analysis Tool Version:  Xcode 12.5 (12E262)
+
+Physical footprint:         6481K
+Physical footprint (peak):  6865K
+----
+
+leaks Report Version: 4.0
+Process 43195: 215 nodes malloced for 16 KB
+Process 43195: 0 leaks for 0 total leaked bytes.
+

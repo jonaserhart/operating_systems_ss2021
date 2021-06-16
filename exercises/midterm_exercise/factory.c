@@ -23,7 +23,7 @@ void* produce(void* arg) {
 	srand(seed);
 	double laziness = (double)rand() / (double)RAND_MAX;
 	debug("Got index arg %d", thread_index);
-	debug("Got laziness %ld", laziness);
+	debug("Got laziness %.2f", laziness);
 	for (;;) {
 		// lock the mutex
 		pthread_mutex_lock(&mutex);
@@ -34,19 +34,22 @@ void* produce(void* arg) {
 
 		if (assignments[thread_index] == DOORS) {
 			// check if there are enough knobs to make a door
-			while (knobs_ready < 2 && doors_to_produce > 0)
+			struct timespec* timeout = malloc(sizeof(struct timespec));
+			timeout->tv_sec = 1;
+			if (knobs_ready < 2)
 				// wait for enough knobs to be available
-				pthread_cond_wait(&cond, &mutex);
+				pthread_cond_timedwait(&cond, &mutex, timeout);
 			// make door
-			sleep((10 + laziness * 90) / 1000);
+			free(timeout);
+			sleep(((10 + laziness) * 90) / 1000);
 			// knobs are used to make a door
 			knobs_ready -= 2;
 			doors_to_produce--;
 		} else {
-			if (knobs_to_produce <= 0 || doors_to_produce <= 0) {
+			if (knobs_to_produce <= 0) {
 				break;
 			}
-			sleep((10 + laziness * 30) / 1000);
+			sleep(((10 + laziness) * 30) / 1000);
 			// make a knob
 			knobs_ready++;
 			knobs_to_produce--;
@@ -67,6 +70,7 @@ void* produce(void* arg) {
 // this code is from my solution of ex11 task2 in 'number_fun'
 int is_number(char number[]) {
 	int i = 0;
+	if (number[0] == 0) return 0;
 	if (number[0] == '-') i = 1;
 	for (; number[i] != 0; i++) {
 		if (!isdigit(number[i])) return 0;
@@ -75,6 +79,7 @@ int is_number(char number[]) {
 }
 
 int main(int argc, char* argv[]) {
+	clock_t start, end;
 	check(argc == 3, "usage: ./factory <enable load balancing> <number of doors to produce>");
 	check(pthread_mutex_init(&mutex, NULL) == 0, "Error initializing mutex");
 	check(pthread_cond_init(&cond, NULL) == 0, "Error initializing pthread_condition");
@@ -88,7 +93,8 @@ int main(int argc, char* argv[]) {
 	int no_doors = atol(argv[2]);
 	int no_knobs = no_doors * 2;
 
-	int no_knob_workers = 17;
+	// just to show reassignment
+	int no_knob_workers = 10;
 	int no_door_workers = MAX_THREADS - no_knob_workers;
 
 	// assign workers and doors_to_produce
@@ -106,27 +112,25 @@ int main(int argc, char* argv[]) {
 
 	// initialize workers
 	for (int i = 0; i < 10; i++) {
-		int* arg = malloc(sizeof(*arg));
-		arg = &i;
-		check(pthread_create(&workers[i], NULL, &produce, (void*)arg) == 0,
-		      "Error creating pthread");
+		check(pthread_create(&workers[i], NULL, &produce, &i) == 0, "Error creating pthread");
 
 		debug("Created worker %d", i);
 	}
 	for (int i = 10; i < MAX_THREADS; i++) {
-		pthread_create(&workers[i], NULL, &produce, &i);
+		check(pthread_create(&workers[i], NULL, &produce, &i) == 0, "Error creating pthread");
 
 		debug("Created worker %d", i);
 	}
 
 	// production loop
 	int elapsed = 0;
+	start = clock();
 	for (;;) {
 		sleep(1);
 		// assign workers
 		elapsed++;
 		pthread_mutex_lock(&mutex);
-
+		// begin critical section
 		if (doors_to_produce <= 0) {
 			log_success("Finished!");
 			break;
@@ -139,9 +143,14 @@ int main(int argc, char* argv[]) {
 		         doors_to_produce == 0 ? 0.0 : ((double)(doors_produced) / (double)elapsed),
 		         knobs_to_produce == 0 ? 0.0 : ((double)(knobs_produced) / (double)elapsed));
 
+		// end critical section
+		pthread_mutex_unlock(&mutex);
 		int reassigned = 0;
 		if (reassign) {
-			if (knobs_produced / doors_produced >= 1.1 || doors_produced == 0) {
+			if (((float)knobs_produced / (float)doors_produced >= 1.1)) {
+				if (no_knob_workers <= 1) {
+					goto cont;
+				}
 				for (int i = 0; i < MAX_THREADS; i++) {
 					if (assignments[i] == KNOBS) {
 						assignments[i] = DOORS;
@@ -153,8 +162,12 @@ int main(int argc, char* argv[]) {
 					}
 				}
 			}
-			if (doors_produced / knobs_produced >= 1.1) {
-				for (int i = 0; i < MAX_THREADS; i++) {
+			if (((float)doors_produced / (float)knobs_produced) >= 1.1) {
+				if (no_door_workers <= 1) {
+					goto cont;
+				}
+				// reversed loop, because door workers are in the back
+				for (int i = (MAX_THREADS - 1); i >= 0; i--) {
 					if (assignments[i] == DOORS) {
 						assignments[i] = KNOBS;
 						no_knob_workers++;
@@ -179,12 +192,14 @@ int main(int argc, char* argv[]) {
 				}
 			}
 		}
-		pthread_mutex_unlock(&mutex);
+	cont:
 		if (reassigned) {
 			log_info("\t Reassigned workers: %d making doors, %d making knobs", no_door_workers,
 			         no_knob_workers);
 		}
 	}
+	end = clock();
+	log_success("Took: %.2f seconds", (((float)(end - start)) / (2 * CLOCKS_PER_SEC)));
 
 	for (int i = 0; i < MAX_THREADS; i++) {
 		if (pthread_join(workers[i], NULL) == 0) {
@@ -199,10 +214,10 @@ int main(int argc, char* argv[]) {
 
 	return 0;
 error:
-	if (&mutex) {
+	if (&mutex != NULL) {
 		pthread_mutex_destroy(&mutex);
 	}
-	if (&cond) {
+	if (&cond != NULL) {
 		pthread_cond_destroy(&cond);
 	}
 	return 1;
