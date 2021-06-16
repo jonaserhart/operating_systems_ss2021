@@ -165,6 +165,7 @@ int main(int argc, char* argv[]) {
 					}
 				}
 			}
+			// assign all workers to produce doors if all knobs are produced
 			if (knobs_to_produce == 0) {
 				// reassign all knob producers to produce doors
 				for (int i = 0; i < MAX_THREADS; i++) {
@@ -180,7 +181,7 @@ int main(int argc, char* argv[]) {
 		}
 		pthread_mutex_unlock(&mutex);
 		if (reassigned) {
-			log_info("\t reassignment: %d making doors, %d making knobs", no_door_workers,
+			log_info("\t Reassigned workers: %d making doors, %d making knobs", no_door_workers,
 			         no_knob_workers);
 		}
 	}
@@ -193,7 +194,16 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
+	pthread_mutex_destroy(&mutex);
+	pthread_cond_destroy(&cond);
+
 	return 0;
 error:
+	if (&mutex) {
+		pthread_mutex_destroy(&mutex);
+	}
+	if (&cond) {
+		pthread_cond_destroy(&cond);
+	}
 	return 1;
 }
