@@ -13,6 +13,6 @@ int main(int argc, char* argv[]) {
 
 	int number = atoi(argv[1]);
 	int result = this_function_should_increment_a_number_by_ten(number);
-	printf("%d", result);
+	printf("%d\n", result);
 	return 0;
 }

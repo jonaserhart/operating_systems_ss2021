@@ -21,6 +21,7 @@ int main(int argc, char* argv[]) {
 	check(argc > 2,
 	      "Not enough arguments. USAGE: ./number_fun <number> <list of plugin libraries>");
 	check(is_number(argv[1]), "Provided argument '%s' is not a number", argv[1]);
+	debug("Hello %d", 5);
 	number = atoi(argv[1]);
 	for (int i = 2; i < argc; i++) {
 		void* lib = NULL;
