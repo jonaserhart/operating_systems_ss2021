@@ -4,7 +4,7 @@ some_library:
 	$(CC) $(CFLAGS) -rdynamic -shared -o some_library.so -fPIC some_library.c
 
 my_program:
-	$(CC) $(CFLAGS) -o my_program my_program.c
+	$(CC) $(CFLAGS) -L. -static  -o my_program my_program.c
 
 clean:
 	rm my_program
