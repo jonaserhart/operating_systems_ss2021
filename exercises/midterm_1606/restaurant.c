@@ -83,6 +83,7 @@ void* cook(void* arg) {
 	}
 	pthread_exit(NULL);
 }
+
 void* placeorder_and_wait(void* arg) {
 	int guest_index = *((int*)arg);
 	pthread_mutex_lock(&order_mutex);
